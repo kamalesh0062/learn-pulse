@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      - JWT_SECRET=learnpulse_production_jwt_secret_key_2026
+      - DATABASE_URL=sqlite:////app/database/learnpulse.db
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:80
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./database:/app/database
+      - ./ml:/app/ml
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

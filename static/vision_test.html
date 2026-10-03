@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnPulse AI — Standalone Computer Vision Tester</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- MediaPipe Tasks Vision CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm/vision_bundle.js" crossorigin="anonymous"></script>
+  <style>
+    body { background-color: #0b0f19; color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+  </style>
+</head>
+<body class="p-6 min-h-screen">
+  <div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="glass-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <div class="flex items-center space-x-2 text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Standalone Diagnostics</span>
+        </div>
+        <h1 class="text-2xl font-extrabold text-white mt-1">Computer Vision & Facial Landmark Tester</h1>
+        <p class="text-xs text-slate-400 mt-1">
+          Isolated testing page for Webcam acquisition, MediaPipe FaceLandmarker WebAssembly, and local feature extraction.
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button id="startBtn" onclick="startCamera()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition-all">
+          🎥 Start Camera Stream
+        </button>
+        <button id="stopBtn" onclick="stopCamera()" class="px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs transition-all hidden">
+          🛑 Stop Camera
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Grid: Video Stream + Diagnostics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Video Stream Box -->
+      <div class="glass-card rounded-2xl p-4 space-y-4">
+        <div class="flex justify-between items-center text-xs font-mono">
+          <span class="font-bold text-slate-300">LIVE WEBCAM & MESH OVERLAY</span>
+          <span id="fpsDisplay" class="px-2 py-1 rounded bg-black/60 text-emerald-400">FPS: 0</span>
+        </div>
+
+        <div class="relative rounded-xl overflow-hidden bg-black border border-white/10 aspect-video flex items-center justify-center">
+          <video id="webcam" playsinline muted autoplay style="transform: scaleX(-1);" class="w-full h-full object-cover"></video>
+          <canvas id="overlay" style="transform: scaleX(-1);" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+          <div id="placeholder" class="text-center p-6 space-y-3">
+            <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 text-xl">📷</div>
+            <p class="text-xs text-slate-300 font-medium">Click "Start Camera Stream" above to activate your camera.</p>
+          </div>
+        </div>
+
+        <!-- Camera Device Dropdown -->
+        <div class="flex items-center justify-between text-xs font-mono bg-slate-900/60 p-3 rounded-xl border border-white/5">
+          <span class="text-slate-400">Select Camera Device:</span>
+          <select id="cameraSelect" onchange="switchCamera()" class="bg-slate-800 text-white rounded-lg px-2 py-1 text-xs border border-white/10 focus:outline-none">
+            <option value="">Default Camera</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Real-Time Metrics & Diagnostic Log -->
+      <div class="space-y-6">
+        
+        <!-- Live Metrics Panel -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">Real-Time Extraction Metrics</h3>
+          
+          <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-slate-400 text-[10px] uppercase">Predicted State</div>
+              <div id="stateVal" class="text-lg font-bold text-emerald-400 mt-1">FOCUSED</div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-slate-400 text-[10px] uppercase">Face Detection</div>
+              <div id="faceVal" class="text-lg font-bold text-emerald-400 mt-1">YES (1.0)</div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-slate-400 text-[10px] uppercase">Head Pose (Pitch / Yaw)</div>
+              <div id="poseVal" class="text-sm font-bold text-white mt-1">P: 0.0° | Y: 0.0°</div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-white/5">
+              <div class="text-slate-400 text-[10px] uppercase">Eye Aspect Ratio (EAR)</div>
+              <div id="earVal" class="text-sm font-bold text-white mt-1">EAR: 0.30</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Log Output -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">Diagnostic Log Output</h3>
+            <button onclick="clearLogs()" class="text-[10px] text-slate-400 hover:text-white underline">Clear Log</button>
+          </div>
+          
+          <div id="logBox" class="h-44 overflow-y-auto bg-black/80 rounded-xl p-3 font-mono text-[11px] text-emerald-400 space-y-1 border border-white/5">
+            <div>[LOG] Standalone Computer Vision Tester Ready.</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let video = document.getElementById('webcam');
+    let canvas = document.getElementById('overlay');
+    let ctx = canvas.getContext('2d');
+    let stream = null;
+    let landmarker = null;
+    let animId = null;
+    let frameCount = 0;
+    let lastFpsTime = Date.now();
+
+    function log(msg, type = 'info') {
+      const logBox = document.getElementById('logBox');
+      const time = new Date().toLocaleTimeString();
+      const color = type === 'error' ? 'text-rose-400' : type === 'warn' ? 'text-amber-400' : 'text-emerald-400';
+      logBox.innerHTML += `<div class="${color}">[${time}] ${msg}</div>`;
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function clearLogs() {
+      document.getElementById('logBox').innerHTML = '<div>[LOG] Log cleared.</div>';
+    }
+
+    async function loadMediaPipe() {
+      try {
+        log("Initializing MediaPipe Tasks Vision WebAssembly...");
+        const vision = await tasksVision.FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
+        );
+        landmarker = await tasksVision.FaceLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          numFaces: 1
+        });
+        log("MediaPipe FaceLandmarker WebAssembly initialized successfully!");
+      } catch (err) {
+        log("MediaPipe initialization failed: " + err.message, "error");
+      }
+    }
+
+    async function enumerateDevices() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        const select = document.getElementById('cameraSelect');
+        select.innerHTML = '<option value="">Default Camera</option>';
+        videoDevices.forEach((dev, idx) => {
+          select.innerHTML += `<option value="${dev.deviceId}">${dev.label || 'Camera ' + (idx + 1)}</option>`;
+        });
+      } catch (e) {
+        log("Device enumeration error: " + e.message, "warn");
+      }
+    }
+
+    async function startCamera() {
+      document.getElementById('startBtn').classList.add('hidden');
+      document.getElementById('stopBtn').classList.remove('hidden');
+      document.getElementById('placeholder').classList.add('hidden');
+
+      if (!landmarker) {
+        await loadMediaPipe();
+      }
+
+      const deviceId = document.getElementById('cameraSelect').value;
+      const constraints = {
+        video: deviceId ? { deviceId: { exact: deviceId } } : { width: { ideal: 640 }, height: { ideal: 480 } },
+        audio: false
+      };
+
+      try {
+        log("Requesting navigator.mediaDevices.getUserMedia stream...");
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        await video.play();
+        log("Webcam stream active! Video resolution: " + video.videoWidth + "x" + video.videoHeight);
+        
+        await enumerateDevices();
+        processFrames();
+      } catch (err) {
+        log("getUserMedia failed: " + err.message, "error");
+        document.getElementById('startBtn').classList.remove('hidden');
+        document.getElementById('stopBtn').classList.add('hidden');
+        document.getElementById('placeholder').classList.remove('hidden');
+      }
+    }
+
+    function switchCamera() {
+      stopCamera();
+      startCamera();
+    }
+
+    function stopCamera() {
+      if (animId) cancelAnimationFrame(animId);
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+      video.srcObject = null;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      document.getElementById('startBtn').classList.remove('hidden');
+      document.getElementById('stopBtn').classList.add('hidden');
+      document.getElementById('placeholder').classList.remove('hidden');
+      document.getElementById('fpsDisplay').innerText = "FPS: 0";
+      log("Camera stream stopped.");
+    }
+
+    function processFrames() {
+      const now = Date.now();
+      frameCount++;
+      if (now - lastFpsTime >= 1000) {
+        document.getElementById('fpsDisplay').innerText = "FPS: " + frameCount;
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+
+      if (video.readyState >= 2 && landmarker) {
+        if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+
+        try {
+          const results = landmarker.detectForVideo(video, now);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+            const landmarks = results.faceLandmarks[0];
+            
+            // Draw mesh dots
+            ctx.fillStyle = "#10b981";
+            for (let i = 0; i < landmarks.length; i += 3) {
+              const pt = landmarks[i];
+              ctx.beginPath();
+              ctx.arc(pt.x * canvas.width, pt.y * canvas.height, 1.3, 0, 2 * Math.PI);
+              ctx.fill();
+            }
+
+            // Estimate Pitch/Yaw
+            const nose = landmarks[1];
+            const chin = landmarks[152];
+            const leftEye = landmarks[33];
+            const rightEye = landmarks[263];
+
+            const eyeDist = Math.hypot(rightEye.x - leftEye.x, rightEye.y - leftEye.y);
+            const eyeMidX = (leftEye.x + rightEye.x) / 2;
+            const yaw = Math.max(-90, Math.min(90, ((nose.x - eyeMidX) / (eyeDist / 2)) * 65));
+            const pitch = Math.max(-90, Math.min(90, ((nose.y - (leftEye.y + 0.05)) / 0.15) * 50));
+
+            // EAR
+            const p1 = landmarks[33], p2 = landmarks[160], p3 = landmarks[158], p4 = landmarks[133], p5 = landmarks[153], p6 = landmarks[144];
+            const ear = (Math.hypot(p2.x - p6.x, p2.y - p6.y) + Math.hypot(p3.x - p5.x, p3.y - p5.y)) / (2.0 * Math.hypot(p1.x - p4.x, p1.y - p4.y));
+
+            document.getElementById('stateVal').innerText = (Math.abs(yaw) > 28 || Math.abs(pitch) > 25) ? "DISTRACTED" : (ear < 0.18 ? "LOW ENGAGEMENT" : "FOCUSED");
+            document.getElementById('stateVal').className = "text-lg font-bold " + (Math.abs(yaw) > 28 ? "text-amber-400" : "text-emerald-400");
+            document.getElementById('faceVal').innerText = "YES (1.0)";
+            document.getElementById('poseVal').innerText = `P: ${pitch.toFixed(1)}° | Y: ${yaw.toFixed(1)}°`;
+            document.getElementById('earVal').innerText = `EAR: ${ear.toFixed(3)}`;
+          } else {
+            document.getElementById('stateVal').innerText = "AWAY";
+            document.getElementById('stateVal').className = "text-lg font-bold text-rose-400";
+            document.getElementById('faceVal').innerText = "NO (0.0)";
+          }
+        } catch (err) {
+          log("Detection error: " + err.message, "warn");
+        }
+      }
+
+      animId = requestAnimationFrame(processFrames);
+    }
+  </script>
+</body>
+</html>

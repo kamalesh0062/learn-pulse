@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Local data and secrets (the SQLite file holds real accounts and password hashes)
+database/*.db
+.env
+
+# Editor / tooling
+.claude/
+.vscode/
+.idea/

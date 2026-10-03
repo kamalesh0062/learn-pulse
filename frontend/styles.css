@@ -1,0 +1,392 @@
+/*
+ * LearnPulse AI - Coursera-Style Web Application Design System
+ * Primary Color: #0056D2 (Coursera Blue) | Background: #FFFFFF (Crisp White)
+ * Typography: #1F1F1F (Dark Charcoal) | Buttons: 4px Rectangular Radius
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: #FFFFFF;
+    color: #1F1F1F;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   COURSERA TOP NAVIGATION BAR
+   ========================================================================== */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E0E0E0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0056D2;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-explore {
+    background-color: #0056D2;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.search-box {
+    position: relative;
+    width: 320px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 8px 14px 8px 36px;
+    border: 1px solid #CCCCCC;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #0056D2;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-link {
+    color: #444444;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.nav-link:hover {
+    color: #0056D2;
+}
+
+.btn-coursera-blue {
+    background-color: #0056D2;
+    color: #FFFFFF;
+    border: 1px solid #0056D2;
+    border-radius: 4px;
+    padding: 9px 22px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-coursera-blue:hover {
+    background-color: #00419E;
+    border-color: #00419E;
+}
+
+.btn-coursera-outline {
+    background-color: #FFFFFF;
+    color: #0056D2;
+    border: 1px solid #0056D2;
+    border-radius: 4px;
+    padding: 8px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-coursera-outline:hover {
+    background-color: #F0F4F9;
+}
+
+/* ==========================================================================
+   COURSERA HERO SECTION
+   ========================================================================== */
+.hero-section {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+    gap: 40px;
+    padding: 60px 48px;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.12;
+    color: #1F1F1F;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+}
+
+.hero-title span {
+    color: #0056D2;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: #444444;
+    line-height: 1.6;
+    margin-bottom: 32px;
+    max-width: 580px;
+}
+
+.hero-graphic {
+    text-align: center;
+}
+
+.blue-circle-emblem {
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, #0056D2 0%, #003B91 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 16px 40px rgba(0, 86, 210, 0.25);
+}
+
+.blue-circle-emblem span {
+    font-size: 6rem;
+    color: #FFFFFF;
+}
+
+/* ==========================================================================
+   UNIVERSITY & PARTNER LOGO BAR
+   ========================================================================== */
+.partners-section {
+    background-color: #F8F9FA;
+    padding: 40px 24px;
+    text-align: center;
+    border-top: 1px solid #EAEAEA;
+    border-bottom: 1px solid #EAEAEA;
+}
+
+.partners-title {
+    font-size: 1.05rem;
+    color: #555555;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.partners-title span {
+    color: #0056D2;
+    font-weight: 700;
+}
+
+.partners-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.partner-logo {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    color: #1F1F1F;
+}
+
+/* ==========================================================================
+   APP TABS NAVIGATION HEADER
+   ========================================================================== */
+.app-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 8px;
+    border-bottom: 2px solid #E0E0E0;
+    margin-bottom: 32px;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #555555;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: #0056D2;
+}
+
+.tab-btn.active {
+    color: #0056D2;
+    border-bottom-color: #0056D2;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ==========================================================================
+   CARDS & GRID LAYOUTS
+   ========================================================================== */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.card {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    border-color: #0056D2;
+    box-shadow: 0 4px 16px rgba(0, 86, 210, 0.12);
+}
+
+.kpi-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #666666;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.kpi-number {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0056D2;
+    margin: 8px 0;
+}
+
+.kpi-sub {
+    font-size: 0.85rem;
+    color: #008A00;
+    font-weight: 600;
+}
+
+/* Badges */
+.badge {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge-easy { background: #E6F4EA; color: #137333; border: 1px solid #CEEAD6; }
+.badge-moderate { background: #E8F0FE; color: #1A73E8; border: 1px solid #D2E3FC; }
+.badge-difficult { background: #FEF7E0; color: #B06000; border: 1px solid #FDE293; }
+.badge-very-difficult { background: #FCE8E6; color: #C5221F; border: 1px solid #FAD2CF; }
+
+/* Modal Dialog */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #1F1F1F;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: #0056D2;
+    outline: none;
+}
